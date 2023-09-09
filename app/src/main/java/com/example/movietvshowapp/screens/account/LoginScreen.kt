@@ -39,6 +39,8 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -58,7 +60,9 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.paging.ExperimentalPagingApi
 import com.example.movietvshowapp.navigation.Screen
 import com.example.movietvshowapp.ui.theme.AppPrimaryColor
 import kotlinx.coroutines.Dispatchers
@@ -68,14 +72,16 @@ import kotlinx.coroutines.withContext
 import kotlin.reflect.KSuspendFunction1
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPagingApi::class)
 @Composable
 fun LoginScreen(
     navController: NavHostController,
-    accountState: AccountState,
     onDataLoaded: () -> Unit,
-    onEvent: KSuspendFunction1<AccountEvent, Unit>
+    accountViewModel: AccountViewModel = hiltViewModel()
 ){
+    val accountState by accountViewModel.state.collectAsState()
+    val onEvent = accountViewModel::onEvent
+
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current

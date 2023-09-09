@@ -33,6 +33,8 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -49,7 +51,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.paging.ExperimentalPagingApi
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import coil.ImageLoader
@@ -65,15 +69,18 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.reflect.KSuspendFunction1
 
-@OptIn(ExperimentalCoilApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalCoilApi::class, ExperimentalMaterial3Api::class, ExperimentalPagingApi::class)
 @SuppressLint("CoroutineCreationDuringComposition", "UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun AccountScreen(
     navController: NavHostController,
-    accountState: AccountState,
-    onEvent: KSuspendFunction1<AccountEvent, Unit>,
-    onClickUpdateMovieId: (Int)->Unit
+    onClickUpdateMovieId: (Int)->Unit,
+    accountViewModel: AccountViewModel = hiltViewModel()
 ){
+
+    val accountState by accountViewModel.state.collectAsState()
+    val onEvent = accountViewModel::onEvent
+
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
 

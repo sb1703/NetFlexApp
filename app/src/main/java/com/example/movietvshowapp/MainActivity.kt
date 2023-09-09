@@ -34,11 +34,6 @@ class MainActivity : ComponentActivity() {
 
     private var keepSplashOpened = true
 
-    private val searchViewModel: SearchViewModel by viewModels()
-    private val movieViewModel: MovieViewModel by viewModels()
-    private val accountViewModel: AccountViewModel by viewModels()
-    private val homeViewModel: HomeViewModel by viewModels()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen().setKeepOnScreenCondition{
@@ -51,11 +46,6 @@ class MainActivity : ComponentActivity() {
                     AppPrimaryColor
                 }
 
-                val searchState by searchViewModel.state.collectAsState()
-                val movieState by movieViewModel.state.collectAsState()
-                val accountState by accountViewModel.state.collectAsState()
-                val homeState by homeViewModel.state.collectAsState()
-
                 val navController = rememberNavController()
                 Surface(
                     modifier = Modifier
@@ -64,15 +54,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     SetupNavGraph(
                         navController = navController,
-                        onDataLoaded = {keepSplashOpened = false},
-                        searchState = searchState,
-                        onSearchEvent = searchViewModel::onEvent,
-                        movieState = movieState,
-                        onMovieEvent = movieViewModel::onEvent,
-                        accountState = accountState,
-                        onAccountEvent = accountViewModel::onEvent,
-                        homeState = homeState,
-                        onHomeEvent = homeViewModel::onEvent
+                        onDataLoaded = {keepSplashOpened = false}
                     )
                 }
             }

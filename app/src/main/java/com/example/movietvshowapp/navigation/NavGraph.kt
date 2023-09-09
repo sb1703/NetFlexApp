@@ -8,6 +8,7 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -26,6 +27,7 @@ import com.example.movietvshowapp.screens.movie.MovieDetailsScreen
 import com.example.movietvshowapp.screens.movie.MovieEvent
 import com.example.movietvshowapp.screens.movie.MovieReviewsScreen
 import com.example.movietvshowapp.screens.movie.MovieState
+import com.example.movietvshowapp.screens.movie.MovieViewModel
 import com.example.movietvshowapp.screens.movie.TVDetailsScreen
 import com.example.movietvshowapp.screens.movie.TVReviewsScreen
 import com.example.movietvshowapp.screens.search.SearchEvent
@@ -44,15 +46,10 @@ import kotlin.reflect.KSuspendFunction1
 fun SetupNavGraph(
     navController: NavHostController,
     onDataLoaded: () -> Unit,
-    searchState: SearchState,
-    onSearchEvent: (SearchEvent)->Unit,
-    movieState: MovieState,
-    onMovieEvent: KSuspendFunction1<MovieEvent, Unit>,
-    accountState: AccountState,
-    onAccountEvent: KSuspendFunction1<AccountEvent, Unit>,
-    homeState: HomeState,
-    onHomeEvent: (HomeEvent)->Unit
+    movieViewModel: MovieViewModel = hiltViewModel()
 ){
+    val onMovieEvent = movieViewModel::onEvent
+
     NavHost(
         navController = navController,
         startDestination = Screen.Login.route
@@ -69,7 +66,9 @@ fun SetupNavGraph(
                 ) + fadeOut(animationSpec = tween(300))
             }
         ){
-            HomeMovieScreen(navController = navController,accountState = accountState, state = homeState,onEvent = onHomeEvent, onClickUpdateMovieId = {movieId: Int ->
+            HomeMovieScreen(
+                navController = navController,
+                onClickUpdateMovieId = {movieId: Int ->
             Log.d("movieId",movieId.toString() + "updateMovieId")
             CoroutineScope(Dispatchers.IO).launch{
                     onMovieEvent(MovieEvent.UpdateMovieId(movieId))
@@ -89,7 +88,9 @@ fun SetupNavGraph(
                 ) + fadeOut(animationSpec = tween(300))
             }
         ){
-            HomeTVScreen(navController = navController,accountState = accountState,state = homeState,onEvent = onHomeEvent, onClickUpdateMovieId = { movieId: Int ->
+            HomeTVScreen(
+                navController = navController,
+                onClickUpdateMovieId = { movieId: Int ->
                 CoroutineScope(Dispatchers.IO).launch{
                     onMovieEvent(MovieEvent.UpdateMovieId(movieId))
                     cancel()
@@ -111,9 +112,12 @@ fun SetupNavGraph(
                 ) + fadeOut(animationSpec = tween(300))
             }
         ){
-            SearchScreen(navController = navController,state = searchState, onEvent = onSearchEvent, onClickUpdateMovieId = {movieId: Int ->
+            SearchScreen(
+                navController = navController,
+                onClickUpdateMovieId = {movieId: Int ->
                 CoroutineScope(Dispatchers.IO).launch{
                     onMovieEvent(MovieEvent.UpdateMovieId(movieId))
+                    cancel()
                 }
             })
         }
@@ -134,11 +138,10 @@ fun SetupNavGraph(
         ){
             AccountScreen(
                 navController = navController,
-                accountState = accountState,
-                onEvent = onAccountEvent,
                 onClickUpdateMovieId = { movieId: Int ->
                     CoroutineScope(Dispatchers.IO).launch{
                         onMovieEvent(MovieEvent.UpdateMovieId(movieId))
+                        cancel()
                     }
                 }
             )
@@ -158,7 +161,9 @@ fun SetupNavGraph(
                 ) + fadeOut(animationSpec = tween(300))
             }
         ){
-            MovieDetailsScreen(navController = navController, state = movieState,accountState = accountState ,onEvent = onMovieEvent, onClickUpdateMovieId = { movieId: Int ->
+            MovieDetailsScreen(
+                navController = navController,
+                onClickUpdateMovieId = { movieId: Int ->
                 CoroutineScope(Dispatchers.IO).launch{
                     onMovieEvent(MovieEvent.UpdateMovieId(movieId))
                     cancel()
@@ -180,7 +185,9 @@ fun SetupNavGraph(
                 ) + fadeOut(animationSpec = tween(300))
             }
         ){
-            TVDetailsScreen(navController = navController, state = movieState,accountState = accountState ,onEvent = onMovieEvent, onClickUpdateMovieId = { movieId: Int ->
+            TVDetailsScreen(
+                navController = navController,
+                onClickUpdateMovieId = { movieId: Int ->
                 CoroutineScope(Dispatchers.IO).launch{
                     onMovieEvent(MovieEvent.UpdateMovieId(movieId))
                     cancel()
@@ -202,7 +209,7 @@ fun SetupNavGraph(
                 ) + fadeOut(animationSpec = tween(300))
             }
         ){
-            MovieReviewsScreen(navController = navController, state = movieState)
+            MovieReviewsScreen(navController = navController)
         }
         composable(
             route = Screen.TVReviews.route,
@@ -219,7 +226,7 @@ fun SetupNavGraph(
                 ) + fadeOut(animationSpec = tween(300))
             }
         ){
-            TVReviewsScreen(navController = navController, state = movieState)
+            TVReviewsScreen(navController = navController)
         }
         composable(
             route = Screen.Login.route,
@@ -233,7 +240,10 @@ fun SetupNavGraph(
                 ) + fadeOut(animationSpec = tween(300))
             }
         ){
-            LoginScreen(navController = navController,onDataLoaded = onDataLoaded, accountState = accountState, onEvent = onAccountEvent)
+            LoginScreen(
+                navController = navController,
+                onDataLoaded = onDataLoaded
+            )
         }
         composable(
             route = Screen.GuestAccount.route,
@@ -250,7 +260,7 @@ fun SetupNavGraph(
                 ) + fadeOut(animationSpec = tween(300))
             }
         ){
-            GuestAccountScreen(navController = navController, onEvent = onAccountEvent)
+            GuestAccountScreen(navController = navController)
         }
     }
 }

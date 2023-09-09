@@ -1,8 +1,10 @@
 package com.example.movietvshowapp.screens.common
 
 import android.content.res.Configuration
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -13,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -20,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -56,7 +60,7 @@ fun MovieContentItem(
     val context = LocalContext.current
 
     Box(
-        modifier = Modifier
+        modifier = Modifier.clip(RoundedCornerShape(20.dp))
             .clickable {
                 onClickUpdateMovieId()
                 navController.navigate(Screen.MovieDetails.route)
@@ -67,7 +71,7 @@ fun MovieContentItem(
     ) {
         if(posterPath != null){
             AsyncImage(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(20.dp)),
                 model = "https://image.tmdb.org/t/p/w500$posterPath",
                 contentDescription = "Movie Image",
                 contentScale = ContentScale.Crop,
@@ -122,7 +126,7 @@ fun TVContentItem(
     val context = LocalContext.current
 
     Box(
-        modifier = Modifier
+        modifier = Modifier.clip(RoundedCornerShape(20.dp))
             .clickable {
                 onClickUpdateMovieId()
                 navController.navigate(Screen.TVDetails.route)
@@ -133,7 +137,7 @@ fun TVContentItem(
     ) {
         if(posterPath!=null){
             AsyncImage(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(20.dp)),
                 model = "https://image.tmdb.org/t/p/w500$posterPath",
                 contentDescription = "TV Image",
                 imageLoader = ImageLoader.Builder(context).crossfade(true).build(),

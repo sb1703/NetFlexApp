@@ -43,7 +43,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.paging.ExperimentalPagingApi
 import com.example.movietvshowapp.R
 import com.example.movietvshowapp.navigation.Screen
 import com.example.movietvshowapp.ui.theme.AppPrimaryColor
@@ -53,12 +55,14 @@ import kotlinx.coroutines.withContext
 import kotlin.reflect.KSuspendFunction1
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPagingApi::class)
 @Composable
 fun GuestAccountScreen(
     navController: NavHostController,
-    onEvent: KSuspendFunction1<AccountEvent, Unit>
+    accountViewModel: AccountViewModel = hiltViewModel()
 ){
+    val onEvent = accountViewModel::onEvent
+
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
 

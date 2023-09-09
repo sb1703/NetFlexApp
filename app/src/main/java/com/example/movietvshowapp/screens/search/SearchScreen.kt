@@ -24,7 +24,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -36,6 +39,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -54,10 +58,12 @@ import com.example.movietvshowapp.ui.theme.AppPrimaryColor
 @Composable
 fun SearchScreen(
     navController: NavHostController,
-    state: SearchState,
-    onEvent: (SearchEvent)->Unit,
-    onClickUpdateMovieId: (Int) -> Unit
+    onClickUpdateMovieId: (Int) -> Unit,
+    searchViewModel: SearchViewModel = hiltViewModel()
 ){
+
+    val state by searchViewModel.state.collectAsState()
+    val onEvent = searchViewModel::onEvent
 
     val color = if(isSystemInDarkTheme()){
         Color.Black} else {
@@ -296,7 +302,7 @@ fun SearchItem(
     val context = LocalContext.current
 
     Box(
-        modifier = Modifier
+        modifier = Modifier.clip(RoundedCornerShape(20.dp))
             .fillMaxWidth()
             .clickable {
                 onClickUpdateMovieId()
@@ -314,7 +320,7 @@ fun SearchItem(
         ) {
             if(path!=null){
                 AsyncImage(
-                    modifier = Modifier
+                    modifier = Modifier.clip(RoundedCornerShape(20.dp))
                         .height(350.dp)
                         .width(225.dp),
                     model = "https://image.tmdb.org/t/p/w500$path",
@@ -324,7 +330,7 @@ fun SearchItem(
                 )
             } else{
                 Surface(
-                    modifier = Modifier
+                    modifier = Modifier.clip(RoundedCornerShape(20.dp))
                         .height(350.dp)
                         .width(225.dp)
                 ){}

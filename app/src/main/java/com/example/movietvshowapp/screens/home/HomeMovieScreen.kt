@@ -11,14 +11,18 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.annotation.ExperimentalCoilApi
 import com.example.movietvshowapp.navigation.Screen
 import com.example.movietvshowapp.screens.account.AccountState
+import com.example.movietvshowapp.screens.account.AccountViewModel
 import com.example.movietvshowapp.screens.common.ListContentNowPlayingMovie
 import com.example.movietvshowapp.screens.common.ListContentPopularMovie
 import com.example.movietvshowapp.screens.common.ListContentTopRatedMovie
@@ -32,10 +36,13 @@ import com.example.movietvshowapp.ui.theme.AppPrimaryColor
 fun HomeMovieScreen(
     navController: NavHostController,
     onClickUpdateMovieId: (Int) -> Unit,
-    accountState: AccountState,
-    state: HomeState,
-    onEvent: (HomeEvent)->Unit
+    homeViewModel: HomeViewModel = hiltViewModel(),
+    accountViewModel: AccountViewModel = hiltViewModel()
 ){
+
+    val onEvent = homeViewModel::onEvent
+    val state by homeViewModel.state.collectAsState()
+    val accountState by accountViewModel.state.collectAsState()
 
     LaunchedEffect(key1 = Unit){
         onEvent(HomeEvent.UpdateGetNowPlayingMovie)

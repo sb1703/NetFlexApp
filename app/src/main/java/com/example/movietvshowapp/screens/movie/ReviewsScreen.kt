@@ -26,6 +26,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,7 +42,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.paging.ExperimentalPagingApi
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
@@ -51,20 +55,24 @@ import com.example.movietvshowapp.model.movieDetails.MovieReviews
 import com.example.movietvshowapp.model.tvDetails.TVReviews
 import com.example.movietvshowapp.ui.theme.AppPrimaryColor
 
+@OptIn(ExperimentalPagingApi::class)
 @Composable
 fun MovieReviewsScreen(
     navController: NavHostController,
-    state: MovieState,
+    movieViewModel: MovieViewModel = hiltViewModel()
 ){
+    val state by movieViewModel.state.collectAsState()
     val getAllMovieReviews = state.getMovieReviews?.collectAsLazyPagingItems()
     ListMovieReviews(navController = navController, items = getAllMovieReviews)
 }
 
+@OptIn(ExperimentalPagingApi::class)
 @Composable
 fun TVReviewsScreen(
     navController: NavHostController,
-    state: MovieState,
+    movieViewModel: MovieViewModel = hiltViewModel()
 ){
+    val state by movieViewModel.state.collectAsState()
     val getAllTVReviews = state.getTVReviews?.collectAsLazyPagingItems()
     ListTVReviews(navController = navController, items = getAllTVReviews)
 }

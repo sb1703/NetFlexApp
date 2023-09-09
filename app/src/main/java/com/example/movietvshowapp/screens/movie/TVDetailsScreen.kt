@@ -37,6 +37,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -51,7 +53,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.paging.ExperimentalPagingApi
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
@@ -62,6 +66,7 @@ import com.example.movietvshowapp.R
 import com.example.movietvshowapp.model.tvDetails.TVSimilar
 import com.example.movietvshowapp.navigation.Screen
 import com.example.movietvshowapp.screens.account.AccountState
+import com.example.movietvshowapp.screens.account.AccountViewModel
 import com.example.movietvshowapp.screens.common.TVContentItem
 import com.example.movietvshowapp.ui.theme.AppPrimaryColor
 import kotlinx.coroutines.Dispatchers
@@ -71,15 +76,19 @@ import kotlinx.coroutines.withContext
 import kotlin.reflect.KSuspendFunction1
 
 @SuppressLint("CoroutineCreationDuringComposition", "UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPagingApi::class)
 @Composable
 fun TVDetailsScreen(
     navController: NavHostController,
-    state: MovieState,
-    onEvent: KSuspendFunction1<MovieEvent, Unit>,
     onClickUpdateMovieId: (Int) -> Unit,
-    accountState: AccountState
+    movieViewModel: MovieViewModel = hiltViewModel(),
+    accountViewModel: AccountViewModel = hiltViewModel()
 ){
+
+    val accountState by accountViewModel.state.collectAsState()
+    val state by movieViewModel.state.collectAsState()
+    val onEvent = movieViewModel::onEvent
+
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
 
